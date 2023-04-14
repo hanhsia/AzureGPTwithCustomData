@@ -1,4 +1,15 @@
+
 <!-- Chinese -->
+本项目演示了如何使用嵌入式和Azure认知服务搭建一个类似GPT的聊天机器人，并利用用户自有数据。该项目展示了两种不同风格的聊天机器人：Bot页面基于Bot Framework SDK，使用Azure认知服务，支持如Teams和Facebook等应用；Chat页面是一个标准的网页聊天应用，使用嵌入式技术搜索用户自有数据。本项目基于以下Azure服务：
+
+Azure OpenAI
+Azure Cognitive Search
+Azure虚拟机（用于部署qdrant矢量数据库，可在2和3之间选择）
+Azure Web应用（可选）
+Azure静态应用（可选）
+Azure Blob存储服务（可选）
+部署完成后，您可以通过网站上传包含用户数据的PDF文档，然后立即与聊天机器人进行交流。以下是本项目的部署文档。关于前端和后端的运行，请分别参阅相应目录中的使用说明。
+
 # 部署文档
 
 本部署文档将指导您完成以下任务：
@@ -256,6 +267,16 @@ sudo docker pull qdrant/qdrant
 现在，您已成功部署了 .NET 后端。
 
 <!-- English -->
+This project demonstrates how to build a GPT-like chatbot using Embedding and Azure Cognitive Services with user's own data. The project features two different styles of chatbots: the Bot page is based on the Bot Framework SDK and uses Azure Cognitive Services, supporting applications like Teams and Facebook; the Chat page is a standard web chat application that uses Embedding to search user's own data. This project is based on the following Azure services:
+
+Azure OpenAI
+Azure Cognitive Search
+Azure Virtual Machine (for deploying qdrant vector database, choose between 2 and 3)
+Azure Web App (optional)
+Azure Static App (optional)
+Azure Blob Storage Service (optional)
+After deployment, you can upload PDF documents containing user data through the website, and then chat with the chatbot immediately. Below is the deployment documentation for this project. For the operation of the front-end and back-end, please refer to the usage instructions in the corresponding directories.
+
 # Deployment Document
 This deployment document will guide you through the following tasks:
 1. Create the required Azure services
