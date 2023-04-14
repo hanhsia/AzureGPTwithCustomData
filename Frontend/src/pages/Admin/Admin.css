@@ -1,0 +1,22 @@
+.quill {
+    display: flex;
+    height: 50%;
+    max-height:50%;
+    flex-direction: column;
+}
+
+.ql-toolbar {
+    display: block ;
+}
+.ql-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.ql-editor {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow:auto
+}

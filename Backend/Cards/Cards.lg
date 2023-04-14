@@ -1,0 +1,158 @@
+﻿# TextResponseCard
+[Activity
+    Attachments = ${json(TextResponseCardJson())}
+]
+
+# TextResponseCardJson
+- ```
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "id": "ResopnseWithTextOnly",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${text}",
+            "size": "medium",
+            "wrap": true
+        }
+    ]
+}
+```
+
+# OneButtonResponseCard
+[Activity
+    Attachments = ${json(OneButtonResponseCardJson())}
+]
+
+# OneButtonResponseCardJson
+- ```
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "id": "ResopnseWithOneButton",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${text}",
+            "size": "medium",
+            "wrap": true
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "${title}",
+            "data": {
+                "action": "${action}"
+            }
+        }
+    ]
+}
+```
+
+# TwoButtonResponseCard
+[Activity
+    Attachments = ${json(TwoButtonResponseCardJson())}
+]
+
+# TwoButtonResponseCardJson
+- ```
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "id": "ResopnseWithOneButton",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${text}",
+            "size": "medium",
+            "wrap": true
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "${title1}",
+            "data": {
+                "action": "${action1}"
+            }
+        },
+        {
+            "type": "Action.Submit",
+            "title": "${title2}",
+            "data": {
+                "action": "${action2}"
+            }
+        }
+    ]
+}
+```
+>json格式的hero card示例
+# JsonFormatHeroCardDemo
+[Activity
+    Attachments = ${ActivityAttachment(json(HeroCardDemoJson()),'heroCard')}
+]
+
+# HeroCardDemoJson
+- ```
+{
+  "text": "${answer}",
+  "buttons": [
+     {
+      "type": "messageBack",
+      "title": "进入IT板块（Ask IT）",
+      "text": "进入IT板块（Ask IT）",
+      "value": {
+        "action": "ITSpecialty"
+      }
+    },
+    {
+      "type": "messageBack",
+      "title": "进入法务板块（小诺）",
+      "text": "进入法务板块（小诺）",
+      "value": {
+        "action": "LegalSpecialty",
+      }
+    }
+  ]
+}
+```
+>suggested action示例
+# SuggestedActionDemo
+[Activity
+    Text = "${answer}"
+    SuggestedActions = ${CardAction('messageBack','进入IT板块（Ask IT）',json(ITSpecialtyJson()))} | ${CardAction(null,'进入法务板块（小诺）',json(LegalSpecialtyJson()))}
+]
+
+
+>Herocard格式的herocard示例
+# HeroCardDemo(answer)
+[Herocard
+    text=${answer}
+    buttons=${CardAction('messageBack', '进入IT板块（Ask IT）',json(ITSpecialtyJson()))}| ${CardAction('messageBack', '进入法务板块（小诺）',json(LegalSpecialtyJson()))}
+]
+
+# CardAction (type,title, value)
+[CardAction
+    Type = ${if(type == null, 'messageBack', type)}
+    Title = ${title}
+    Text=${title}
+    Value = ${value}
+]
+
+# ITSpecialtyJson
+-```
+{
+   "action": "ITSpecialty"
+}
+```
+# LegalSpecialtyJson
+-```
+{
+   "action": "ITSpecialty"
+}
+```
