@@ -6,10 +6,6 @@
 
 该ASP.NET Core 7.0后端应用为前端提供了Web API，实现了两种方法的GPT聊天，同时提供了Azure Search和OpenAI Embedding两种方法获取私域数据，结合Azure OpenAI的GPT进行问答。支持auzregbt-turbo 3.5, gpt4.0和gpt4.0-32k。
 
-## MD5
-
-中文文档MD5: `a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6`
-英文文档MD5: `p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1`
 
 ## 开发规范
 
@@ -54,10 +50,6 @@ dotnet run
 
 This ASP.NET Core 7.0 backend application provides Web API for the frontend, implementing GPT chat with two methods, and providing two methods for obtaining private domain data through Azure Search and OpenAI Embedding, combined with Azure OpenAI's GPT for Q&A. It supports auzregbt-turbo 3.5, gpt4.0, and gpt4.0-32k.
 
-## MD5
-
-Chinese Document MD5: `a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6`
-English Document MD5: `p6o5n4m3l2k1j0i9h8g7f6e5d4c3b2a1`
 
 ## Development Standards
 
