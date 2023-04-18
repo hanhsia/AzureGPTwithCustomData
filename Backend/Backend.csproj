@@ -38,6 +38,7 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
     <PackageReference Include="Azure.Storage.Files.Shares" Version="12.13.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.13.0" />
+    <PackageReference Include="Bot.Builder.Community.Cards" Version="4.13.5" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
