@@ -56,7 +56,6 @@ namespace Backend.Dialogs
         {
             var userStateAccessors = _userState.CreateProperty<UserData>(nameof(UserData));
             var userData = await userStateAccessors.GetAsync(stepContext.Context, () => new UserData());
-            _aiService.CurrentProvider=userData.ServiceProvider;
 
             var conversationStateAccessors = _conversationState.CreateProperty<ConversationData>(nameof(ConversationData));
             var conversationData = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationData());
@@ -64,40 +63,48 @@ namespace Backend.Dialogs
             var question = string.Empty;
 
             //get current question
-            var switchAiService = CheckServiceProvider(stepContext);
-            if (switchAiService)
-            {
-                question=conversationData.ConversationHistory[conversationData.ConversationHistory.Count-1].User;
-            }
-            else
-            {
-                question =stepContext.Context.Activity.Text;
-            }
+           question =stepContext.Context.Activity.Text;
 
             //generate answer using azure search and gpt
             var answer = await GenerateAnswerAsync(question, conversationData.ConversationHistory);
             if (!string.IsNullOrEmpty(answer))
             {
                 //send response to the user
-                if (switchAiService)
-                {
-                    await SendTextResponseAsync(stepContext, answer, cancellationToken);
-                    _aiService.CurrentProvider=_aiService.CurrentProvider==ProviderType.OpenAi ? ProviderType.Azure : ProviderType.OpenAi;
-                }
-                else
-                {
-                    await SendOneButtonResponseAsync(stepContext, conversationData, answer, cancellationToken);
-                }
+                await SendTextResponseAsync(stepContext, answer, cancellationToken);
+                await SaveToHistoryAsync(stepContext, question, answer);
+
             }
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
+
+        private async Task SaveToHistoryAsync(WaterfallStepContext stepContext, string question, string answer)
+        {
+            var conversationStateAccessors = _conversationState.CreateProperty<ConversationData>(nameof(ConversationData));
+            var conversationData = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationData());
+
+            //save user question and bot response to the conversation data.
+            var pair = new ChatTurn()
+            {
+                User=question,
+                Assistant=answer
+            };
+            conversationData.ConversationHistory.Add(pair);
+
+            var count = _aiService.GetTokenCount(string.Join("\n", conversationData.ConversationHistory.Select(x => x.User+"\n"+x.Assistant)));
+            while (count>2500)
+            {
+                conversationData.ConversationHistory.RemoveAt(0);
+                count = _aiService.GetTokenCount(string.Join("\n", conversationData.ConversationHistory.Select(x => x.User+"\n"+x.Assistant)));
+            }
+        }
+
+
 
         private async Task<string> GenerateAnswerAsync(string question, SynchronizedCollection<ChatTurn> history)
         {
             string answer = string.Empty;
             string internalEnglishQuestion = question;
             string internalChineseQuestion = question;
-
 
             //get full context question usge gpt summary
             (internalEnglishQuestion,internalChineseQuestion) = await _aiService.GetFullContextQuestionAsync(question, history);
@@ -118,70 +125,15 @@ namespace Backend.Dialogs
         }
 
 
-        private bool CheckServiceProvider(WaterfallStepContext stepContext)
+
+        private async Task<string> SendTextResponseAsync(WaterfallStepContext stepContext, string answer, CancellationToken cancellationToken)
         {
-            dynamic value = stepContext.Context.Activity.Value;
-            if (value !=null)
-            {
-                var action = value["action"].ToString();
-
-                if (action =="SwitchServiceProvider")
-                {
-
-                    _aiService.CurrentProvider=_aiService.CurrentProvider==ProviderType.OpenAi ? ProviderType.Azure : ProviderType.OpenAi;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return false;
-        }
-
-        private async Task<string> SendTextResponseAsync(WaterfallStepContext stepContext, string? answer, CancellationToken cancellationToken)
-        {
-            var source = _aiService.CurrentProvider==ProviderType.OpenAi ? "OpenAI" : "Azure";
-            var answerWithSource = $"This is the answer from {source}:\\n\\n{answer}";
-
-            var cardText = _lgEngine.Evaluate("TextResponseCard", new { text = answerWithSource });
+            var cardText = _lgEngine.Evaluate("TextResponseCard", new { text = answer });
             var answerActivity = ActivityFactory.FromObject(cardText);
-            return (await stepContext.Context.SendActivityAsync(answerActivity, cancellationToken)).Id;
+            var response = await stepContext.Context.SendActivityAsync(answerActivity, cancellationToken);
+
+            return response.Id;
+
         }
-
-        private async Task<string?> SendOneButtonResponseAsync(WaterfallStepContext stepContext, ConversationData conversationData, string answer, CancellationToken cancellationToken)
-        {
-            var cardData = new
-            {
-                text = answer,
-                title = _aiService.CurrentProvider==ProviderType.OpenAi ? "Peek Azure's answer" : "Peek OpenAI's answer",
-                action = "SwitchServiceProvider"
-            };
-            var cardText = _lgEngine.Evaluate("OneButtonResponseCard", cardData);
-            var answerActivity = ActivityFactory.FromObject(cardText);
-
-            if (answerActivity != null)
-            {
-                object adaptiveCard = answerActivity.Attachments[0].Content;
-                DataId.SetInAdaptiveCard(ref adaptiveCard, new DataIdOptions(DataIdScopes.Card));
-                answerActivity.Attachments[0].Content = adaptiveCard;
-                var response = await stepContext.Context.SendActivityAsync(answerActivity, cancellationToken);
-
-                //save user question and bot response to the conversation data.
-                var pair = new ChatTurn() { 
-                    User=stepContext.Context.Activity.Text, 
-                    Assistant=answer };
-                conversationData.ConversationHistory.Add(pair);
-                var count = _aiService.GetTokenCount(string.Join("\n",conversationData.ConversationHistory.Select(x => x.User+"\n"+x.Assistant)));
-                while (count>2500)
-                {
-                    conversationData.ConversationHistory.RemoveAt(0);
-                    count = _aiService.GetTokenCount(string.Join("\n", conversationData.ConversationHistory.Select(x => x.User+"\n"+x.Assistant)));
-                }
-                return response.Id;
-            }
-            return null;
-        }
-
     }
 }

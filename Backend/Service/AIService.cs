@@ -28,7 +28,6 @@ namespace Backend.Service
         private readonly HttpClient _qdrantClient;
         private readonly string _collectionName = "kbindex";
 
-        public ProviderType CurrentProvider { get; set; } = ProviderType.Azure;
 
         public AIService(
             IOptions<AzureOpenAIClientSettings> aoiOptions,
@@ -170,7 +169,6 @@ namespace Backend.Service
                 return (internalEnglishQuestion, internalChineseQuestion);
             }
 
-            var client = CurrentProvider== ProviderType.Azure ? _azureOpenAIClient : _openAIClient;
 
             CompletionsOptions completionsOptions = new CompletionsOptions()
             {
@@ -185,7 +183,7 @@ namespace Backend.Service
                 PresencePenalty=0,
             };
             var deploymentOrModelName = "text-davinci-003";
-            var result = client.GetCompletions(deploymentOrModelName, completionsOptions);
+            var result = _azureOpenAIClient.GetCompletions(deploymentOrModelName, completionsOptions);
             internalEnglishQuestion = result?.Value?.Choices?[0]?.Text??internalEnglishQuestion;
             internalChineseQuestion = result?.Value?.Choices?[1]?.Text??internalChineseQuestion;
 
@@ -354,8 +352,7 @@ namespace Backend.Service
             {
                 return "What you said is too long, please take your time.";
             }
-            var client = CurrentProvider== ProviderType.Azure ? _azureOpenAIClient : _openAIClient;
-            var deploymentOrModelName = CurrentProvider== ProviderType.Azure ? "gpt-35-turbo" : "gpt-3.5-turbo";
+            var deploymentOrModelName = "gpt-35-turbo";
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
                 Temperature=temperature,
@@ -368,7 +365,7 @@ namespace Backend.Service
                 chatCompletionsOptions.Messages.Add(message);
             }
 
-            var completionResult = await client.GetChatCompletionsAsync(deploymentOrModelName, chatCompletionsOptions);
+            var completionResult = await _azureOpenAIClient.GetChatCompletionsAsync(deploymentOrModelName, chatCompletionsOptions);
 
             answer = completionResult?.Value?.Choices?.FirstOrDefault()?.Message.Content??string.Empty;
 
@@ -417,8 +414,7 @@ namespace Backend.Service
             {
                 return null;
             }
-            var client = CurrentProvider== ProviderType.Azure ? _azureOpenAIClient : _openAIClient;
-            var deploymentOrModelName = CurrentProvider== ProviderType.Azure ? "gpt-35-turbo" : "gpt-3.5-turbo";
+            var deploymentOrModelName = "gpt-35-turbo";
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
                 Temperature=0.5f,
@@ -431,7 +427,7 @@ namespace Backend.Service
                 chatCompletionsOptions.Messages.Add(message);
             }
 
-            var completionResult = client.GetChatCompletionsStreaming(deploymentOrModelName, chatCompletionsOptions);
+            var completionResult = _azureOpenAIClient.GetChatCompletionsStreaming(deploymentOrModelName, chatCompletionsOptions);
             return completionResult.Value.GetChoicesStreaming();
         }
 
@@ -453,7 +449,6 @@ namespace Backend.Service
         /// <returns></returns>
         public async Task<IReadOnlyList<float>> GetEmbeddingAsync(string content)
         {
-            var client = CurrentProvider== ProviderType.Azure ? _azureOpenAIClient : _openAIClient;
             var pattern = "[\r\n,.!?，。！？]";
             string replacement = "";
             string newContent = Regex.Replace(content, pattern, replacement);
@@ -461,7 +456,7 @@ namespace Backend.Service
             var embeddingsRequest = new EmbeddingsOptions(newContent);
             var deploymentOrModelName = "text-embedding-ada-002";
 
-            Response<Embeddings> response = await client.GetEmbeddingsAsync(deploymentOrModelName, embeddingsRequest);
+            Response<Embeddings> response = await _azureOpenAIClient.GetEmbeddingsAsync(deploymentOrModelName, embeddingsRequest);
             return response.Value.Data[0].Embedding;
         }
 

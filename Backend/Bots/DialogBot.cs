@@ -93,27 +93,18 @@ namespace Backend.Bots
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
-            var userStateAccessors = _userState.CreateProperty<UserData>(nameof(UserData));
-            var userData = await userStateAccessors.GetAsync(turnContext, () => new UserData());
-            var currentType=userData.ServiceProvider;
             foreach (var member in membersAdded)
             {
                 // Greet anyone that was not the target (recipient) of this message.
                 // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
-                    string provider = currentType==ProviderType.Azure ? "Azure" : "OpenAI";
-                    string newProvider = currentType==ProviderType.Azure ? "OpenAI" : "Azure";
                     var cardData = new
                     {
-                        text = $"Welcome to chat with GPT bot!\r\n Current service provider is {provider}.You can click below buttons to set service provider.",
-                        title1 = $"Azure",
-                        action1 = "SetAzureAsServiceProvider",
-                        title2 = $"OpenAI",
-                        action2 = "SetOpenAiAsServiceProvider"
+                        text = $"Welcome to chat with GPT bot!",
                     };
-                    
-                    var cardText = _lgEngine.Evaluate("TwoButtonResponseCard", cardData);
+
+                    var cardText = _lgEngine.Evaluate("TextResponseCard", cardData);
                     var answerActivity = ActivityFactory.FromObject(cardText);
 
                     if (answerActivity != null)
@@ -121,9 +112,10 @@ namespace Backend.Bots
                         await turnContext.SendActivityAsync(answerActivity, cancellationToken);
                     }
                 }
-                
+
             }
         }
+
 
         // Load attachment from embedded resource.
         //private Attachment? CreateAdaptiveCardAttachment()
