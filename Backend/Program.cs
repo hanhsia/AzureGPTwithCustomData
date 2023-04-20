@@ -6,7 +6,6 @@ using Backend.Adapters;
 using Backend.Bots;
 using Backend.Dialogs;
 using Backend.Model;
-using Bot.Builder.Community.Cards.Management;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -151,16 +150,14 @@ namespace Backend
             // Create the Conversation state. (Used by the _dialog system itself.)
             builder.Services.AddSingleton<ConversationState>();
 
-            builder.Services.AddSingleton<CardManager, CardManager<ConversationState>>();
-
             // The MainDialog that will be run by the bot.
             builder.Services.AddSingleton<MainDialog>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             builder.Services.AddTransient<IBot, DialogBot<MainDialog>>();
 
-            builder.Services.Configure<BlobStorageClientSettings>(builder.Configuration.GetSection("BlobStorageClientSettings"));
-            builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
+            //builder.Services.Configure<BlobStorageClientSettings>(builder.Configuration.GetSection("BlobStorageClientSettings"));
+            //builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
             
             builder.Services.AddAzureClients(clientBuilder =>

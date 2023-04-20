@@ -7,7 +7,7 @@ const getBlobUploadUri = async (token: string, name: string): Promise<string | n
 
         let response = await axios.get(
             API_URL + `/api/file/getuploaduri?filepath=${name}`
-            
+
         )
         if (response.status === 200) {
             if (response.data.isSuccess) {
@@ -102,11 +102,33 @@ const deleteBlob = async (token: string, name: string): Promise<boolean> => {
     }
 
     return false;
+}
+
+
+const downloadBlob = async (token: string, name: string): Promise<any> => {
+    try {
+
+        const response = await fetch(API_URL + `/api/file/download?filePath=${encodeURIComponent(name)}`);
+
+        if (response.ok) {
+
+            return response;
+        }
+        else {
+            console.error('Download failed:', response.statusText);
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    return false;
 };
 
 const StorageService = {
     getBlobUploadUri,
     getBlobDownloadUri,
+    downloadBlob,
     getBlobList,
     deleteBlob,
     uploadPdf

@@ -1,6 +1,4 @@
-﻿using Bot.Builder.Community.Cards;
-using Bot.Builder.Community.Cards.Management;
-using Microsoft.Bot.Builder;
+﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.ApplicationInsights.Core;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Builder.TraceExtensions;
@@ -15,23 +13,11 @@ namespace Backend.Adapters
             BotFrameworkAuthentication auth,
             ILogger<IBotFrameworkHttpAdapter> logger,
             TelemetryInitializerMiddleware telemetryInitializerMiddleware,
-            CardManager cardManager,
             ConversationState? conversationState = default)
             : base(auth, logger)
         {
             Use(telemetryInitializerMiddleware);
             Use(new ShowTypingMiddleware());
-
-            var cardManagerMiddleware = new CardManagerMiddleware(cardManager);
-            cardManagerMiddleware.UpdatingOptions.IdTrackingStyle=TrackingStyle.TrackEnabled;
-           
-            Use(cardManagerMiddleware
-                .SetAutoApplyIds(false)
-                .SetAutoConvertAdaptiveCards(false)
-                .SetIdOptions(new DataIdOptions(new[]
-                {
-                    DataIdScopes.Card
-                })));
 
             OnTurnError = async (turnContext, exception) =>
             {

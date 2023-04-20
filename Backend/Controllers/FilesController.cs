@@ -23,17 +23,18 @@ namespace WebApi.Controllers
 
 
         private readonly ILogger<FilesController> _logger;
-        private readonly IBlobStorageService _blobStorage;
         private readonly AIService _aiService;
-
+        private readonly string _localFolder = @".\data";
         public FilesController(
             AIService aiService,
-            IBlobStorageService blobStorage,
             ILogger<FilesController> logger)
         {
             _aiService= aiService;
-            _blobStorage = blobStorage;
             _logger = logger;
+            if (!Directory.Exists(_localFolder))
+            {
+                Directory.CreateDirectory(_localFolder);
+            }
         }
 
         [HttpPost, DisableRequestSizeLimit, RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
@@ -44,24 +45,21 @@ namespace WebApi.Controllers
             try
             {
                 var files = formData.Files;
-                var tasks = new List<Task<BlobContentInfo?>>();
-                foreach (var item in files)
+
+                foreach (var file in files)
                 {
-                    tasks.Add(_blobStorage.UploadBlobAsync(item.OpenReadStream(), $"{item.FileName}", item.ContentType));
-                }
-                try
-                {
-                    Task.WaitAll(tasks.ToArray());
-                }
-                catch (AggregateException ae)
-                {
-                    _logger.LogWarning("One or more exceptions occurred in UploadBlobAsync:");
-                    foreach (var ex in ae.InnerExceptions)
+                    if (file.Length > 0)
                     {
-                        _logger.LogWarning(ex, "Exception from UploadBlobAsync");
+                        string filePath = Path.Combine(_localFolder, file.FileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            file.CopyTo(fileStream);
+                        }
                     }
-                    return StatusCode(500, "Internal server error");
                 }
+
+
                 return Ok();
             }
             catch (Exception ex)
@@ -89,20 +87,16 @@ namespace WebApi.Controllers
                 var tasks = new List<Task<BlobContentInfo?>>();
                 foreach (var file in files)
                 {
-                    try
+                    if (file.Length > 0)
                     {
-                        await _blobStorage.UploadBlobAsync(file.OpenReadStream(), $"/data/{file.FileName}", file.ContentType);
+                        string filePath = Path.Combine(_localFolder, file.FileName);
 
-                    }
-                    catch (AggregateException ae)
-                    {
-                        _logger.LogWarning("One or more exceptions occurred in UploadBlobAsync:");
-                        foreach (var ex in ae.InnerExceptions)
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            _logger.LogWarning(ex, "Exception from UploadBlobAsync");
+                            file.CopyTo(fileStream);
                         }
-                        return StatusCode(500, "Internal server error");
                     }
+
                     PdfLoadedDocument loadedDocument = new PdfLoadedDocument(file.OpenReadStream());
                     // Loading page collections
                     PdfLoadedPageCollection loadedPages = loadedDocument.Pages;
@@ -418,114 +412,33 @@ namespace WebApi.Controllers
             await Task.CompletedTask;
             try
             {
-                var stream = await _blobStorage.GetBlobAsync(filePath);
-                var properties = await _blobStorage.GetBlobPropertiesAsync(filePath);
-                if (stream!=null && properties!=null)
+                string absoluteFilePath = Path.Combine(_localFolder, filePath);
+
+                if (string.IsNullOrEmpty(absoluteFilePath) || !System.IO.File.Exists(absoluteFilePath))
                 {
-                    return File(stream, properties.ContentType);
+                    _logger.LogWarning("File not found: {FilePath}", absoluteFilePath);
+                    return NotFound("File not found");
                 }
-                else
+
+                // 设置下载文件的MIME类型
+                string contentType = "application/octet-stream";
+                var mimeTypeProvider = new FileExtensionContentTypeProvider();
+                if (mimeTypeProvider.TryGetContentType(absoluteFilePath, out string? mimeType))
                 {
-                    return NoContent();
+                    contentType = mimeType;
                 }
+
+                // 设置下载文件的文件名
+                string fileName = Path.GetFileName(absoluteFilePath);
+
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(absoluteFilePath);
+                var result = File(fileBytes, contentType, fileName);
+                Response.Headers.Add("Content-Disposition", $"attachment; filename={fileName}");
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Download file failed");
-                return StatusCode(500, "Internal server error");
-            }
-            finally
-            {
-                _logger.Exit();
-            }
-        }
-
-        [HttpGet]
-        [Route("getuploaduri")]
-        public async Task<IActionResult> GetUploadUri([FromQuery] string filePath, int period = 60)
-        {
-            _logger.Enter();
-
-            try
-            {
-                if (string.IsNullOrEmpty(filePath))
-                {
-                    _logger.LogInformation("filePath is null in GetUploadUri");
-                    return BadRequest();
-                }
-
-                var expireTime = DateTime.Now.AddMinutes(period);
-                var uri = await _blobStorage.GetBlobUriAsync(filePath, expireTime, BlobSasPermissions.Create |BlobSasPermissions.Add | BlobSasPermissions.Read | BlobSasPermissions.Write);
-                if (!string.IsNullOrEmpty(uri?.ToString()))
-                {
-                    return Ok(new
-                    {
-                        isSuccess = true,
-                        Content = new
-                        {
-                            Uri = uri
-                        }
-                    });
-                }
-                else
-                {
-                    return Ok(new
-                    {
-                        isSuccess = false,
-                        Message = "Can't get SAS Uri"
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "GetUploadUri failed");
-                return StatusCode(500, "Internal server error");
-            }
-            finally
-            {
-                _logger.Exit();
-            }
-        }
-
-        [HttpGet]
-        [Route("getdownloaduri")]
-        public async Task<IActionResult> GetDownloadUri([FromQuery] string filePath, int period = 120)
-        {
-            _logger.Enter();
-
-            try
-            {
-                if (string.IsNullOrEmpty(filePath))
-                {
-                    _logger.LogInformation("filePath is null in GetUploadUri");
-                    return BadRequest();
-                }
-
-                var expireTime = DateTime.Now.AddMinutes(period);
-                var uri = await _blobStorage.GetBlobUriAsync(filePath, expireTime, BlobSasPermissions.Read);
-                if (!string.IsNullOrEmpty(uri?.ToString()))
-                {
-                    return Ok(new
-                    {
-                        isSuccess = true,
-                        Content = new
-                        {
-                            Uri = uri
-                        }
-                    });
-                }
-                else
-                {
-                    return Ok(new
-                    {
-                        isSuccess = false,
-                        Message = "Can't get SAS Uri"
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "GetDownloadUri failed");
                 return StatusCode(500, "Internal server error");
             }
             finally
@@ -539,84 +452,33 @@ namespace WebApi.Controllers
         [Route("list")]
         public async Task<IActionResult> List([FromBody] ListModel listModel)
         {
+            await Task.CompletedTask;
             _logger.Enter();
             try
             {
                 var prefix = listModel.Prefix;
-                dynamic? result = null;
-                if (!string.IsNullOrEmpty(prefix) && (prefix[0] == '/' || prefix[0] == '\\'))
-                {
-                    string trimmedPath = prefix.TrimStart('/', '\\');
-                    List<string> pathItems = trimmedPath.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    var count = pathItems.Count();
-                    if (count > 1)
-                    {
-                        var containerName = pathItems[0];
+                string targetPath = Path.Combine(_localFolder, prefix);
 
-                        pathItems.RemoveAt(0);
-                        var pathWithoutContainerName = String.Join('/', pathItems.ToArray());
-
-                        var blobs = await _blobStorage.GetBlobsAsync(containerName, pathWithoutContainerName+"/");
-                        if (blobs!=null)
-                        {
-                            result = await (from item in blobs
-                                            select new { Name = item.Name }).ToArrayAsync();
-
-                        }
-                        else
-                        {
-                            _logger.LogInformation("No files found");
-                            return NotFound();
-                        }
-                    }
-                    else if (count==1)
-                    {
-                        var containerName = pathItems[0];
-                        var blobs = await _blobStorage.GetBlobsAsync(containerName);
-                        if (blobs!=null)
-                        {
-                            result = await (from item in blobs
-                                            select new { Name = item.Name }).ToArrayAsync();
-
-                        }
-                        else
-                        {
-                            _logger.LogInformation("No files found");
-                            return NotFound();
-                        }
-                    }
-                }
-                else
-                {
-                    var blobs = await _blobStorage.GetBlobsAsync(null, prefix+"/");
-                    if (blobs != null)
-                    {
-                        result = await (from item in blobs
-                                        select new { Name = item.Name }).ToArrayAsync();
-                    }
-                    else
-                    {
-                        _logger.LogInformation("No files found");
-                        return NotFound();
-                    }
-                }
-                if (result != null)
-                {
-
-                    return Ok(new
-                    {
-                        isSuccess = true,
-                        Content = result
-                    });
-                }
-                else
+                // 读取该目录下所有文件
+                if (!Directory.Exists(targetPath))
                 {
                     return Ok(new
                     {
                         isSuccess = false,
-                        Message = "Cant get blob list in specified path"
+                        Message = "Specified path does not exist"
                     });
                 }
+
+                var files = Directory.GetFiles(targetPath);
+
+                // 返回文件名信息
+                var result = files.Select(file => new { Name = Path.GetFileName(file) }).ToArray();
+
+                return Ok(new
+                {
+                    isSuccess = true,
+                    Content = result
+                });
 
 
             }
@@ -637,29 +499,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> List()
         {
             _logger.Enter();
-            try
-            {
-                var blobs = await _blobStorage.GetBlobsAsync();
-                if (blobs != null)
-                {
-                    var result = await (from item in blobs
-                                        select new { Name = item.Name, Uri = _blobStorage.GetBlobUriAsync($"{item.Name}").Result }).ToArrayAsync();
-
-                    // Response.StatusCode = StatusCodes.Status400BadRequest;
-                    return new JsonResult(result);
-                }
-                _logger.LogInformation("No files found");
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "List files failed");
-                return StatusCode(500, "Internal server error");
-            }
-            finally
-            {
-                _logger.Exit();
-            }
+            return await List(new ListModel() { Prefix=""});
         }
 
 
@@ -667,21 +507,31 @@ namespace WebApi.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] DeleteModel deleteModel)
         {
+            await Task.CompletedTask;
             _logger.Enter();
             try
             {
                 var name = deleteModel.Name;
-                var result = await _blobStorage.DeleteAsync(name);
-                if (name.StartsWith("/data/"))
+                string filePath = Path.Combine(_localFolder, name);
+
+                // 检查文件是否存在，然后删除
+                if (System.IO.File.Exists(filePath))
                 {
-                    var fileName = Path.GetFileName(name);
-                    await _aiService.RemoveFileFromIndex(fileName);
-                    await _aiService.DeletePoints(fileName);
+
+                    System.IO.File.Delete(filePath);
+                    await _aiService.RemoveFileFromIndex(name);
+                    await _aiService.DeletePoints(name);
+
+                    return Ok(new { isSuccess = true });
                 }
-                return Ok(new
+                else
                 {
-                    isSuccess = result
-                });
+                    return Ok(new
+                    {
+                        isSuccess = false,
+                        Message = "File not found"
+                    });
+                }
             }
             catch (Exception ex)
             {

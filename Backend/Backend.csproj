@@ -36,9 +36,6 @@
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
     <PackageReference Include="Azure.Search.Documents" Version="11.5.0-beta.2" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
-    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.13.0" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.13.0" />
-    <PackageReference Include="Bot.Builder.Community.Cards" Version="4.13.5" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
@@ -66,7 +63,6 @@
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Syncfusion.Licensing" Version="21.1.35" />
     <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="21.1.35" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />

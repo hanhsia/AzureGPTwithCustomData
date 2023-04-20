@@ -6,7 +6,6 @@
 using Azure.Search.Documents.Models;
 using Backend.Model;
 using Backend.Service;
-using Bot.Builder.Community.Cards.Management;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.LanguageGeneration;
@@ -16,7 +15,6 @@ namespace Backend.Dialogs
     public class MainDialog : ComponentDialog
     {
         private readonly AIService _aiService;
-        private readonly CardManager _cardManager;
         private readonly UserState _userState;
         private readonly BotState _conversationState;
         private readonly ILogger _logger;
@@ -24,14 +22,12 @@ namespace Backend.Dialogs
 
         public MainDialog(
             AIService aiService,
-            CardManager cardManager,
             UserState userState,
             ConversationState conversationState,
             IConfiguration configuration,
             ILogger<MainDialog> logger)
         {
             _aiService=aiService;
-            _cardManager=cardManager;
             _userState = userState;
             _conversationState = conversationState;
             _logger = logger;

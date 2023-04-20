@@ -44,7 +44,7 @@ const FilesUploader = (props: FilesUploaderProps) => {
             let accessToken = await AuthService.getAccessToken("");
             let list: any;
             if (accessToken != null) {
-                    list = await StorageService.getBlobList(accessToken, "/data");
+                    list = await StorageService.getBlobList(accessToken, "");
                     if (list != null) {
                         setFileList(list);
                     }
@@ -52,40 +52,6 @@ const FilesUploader = (props: FilesUploaderProps) => {
             }
         
     }, [fileStates])
-
-    const upload = useCallback(async () => {
-        try {
-            
-                    //get access token
-                    let file = fileStates[0].file;
-                    let accessToken = await AuthService.getAccessToken("");
-
-                    if (accessToken != null) {
-                        let fileName = `${file.name}`;
-                        let uri = await StorageService.getBlobUploadUri(accessToken, fileName);
-                        if (uri != null) {
-                            const blockBlobClient = new BlockBlobClient(
-                                uri,
-                                pipeline
-                            );
-
-                            await blockBlobClient.uploadData(file, {
-                                blockSize: 8 * 1024 * 1024, // 4MB block size
-                                concurrency: navigator.hardwareConcurrency, // 20 concurrency
-                                onProgress: (ev) => console.log(ev),
-                            });
-                            console.log("Successfully uploaded file:", blockBlobClient.name);
-                            removeFromList(0);
-
-                        }
-
-                    }
-            
-        } catch (err: any) {
-            console.log(err);
-        }
-    }, [fileStates])
-
 
     const uploadPdf = useCallback(async () => {
         try {
@@ -135,7 +101,7 @@ const FilesUploader = (props: FilesUploaderProps) => {
 
             if (accessToken != null) {
                 let fileName = "";
-                fileName = `/data/${name}`;
+                fileName = `${name}`;
                 
                 let result = await StorageService.deleteBlob(accessToken, fileName);
                 if (result) {
@@ -152,18 +118,17 @@ const FilesUploader = (props: FilesUploaderProps) => {
 
             if (accessToken != null) {
                 let fileName = "";
-                fileName = `/data/${name}`
+                fileName = `${name}`
                 
-                let url = await StorageService.getBlobDownloadUri(accessToken, fileName);
-                if (url) {
-                    const link = document.createElement('a');
-                    link.target = "_blank";
-                    link.download = name;
-                    link.href = url;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
+                let response = await StorageService.downloadBlob(accessToken, fileName);
+                if (response) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = response.headers.get('Content-Disposition')?.split('filename=')[1] || 'downloaded_file';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
                 }
             }
         

@@ -4,7 +4,6 @@
 // Generated with Bot Builder V4 SDK Template for Visual Studio CoreBot v4.18.1
 
 using Backend.Model;
-using Bot.Builder.Community.Cards.Management;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
