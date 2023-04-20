@@ -1,35 +1,33 @@
 <!-- Chinese -->
 
-# Ç°¶ËReact³ÌÐò¿ª·¢ÎÄµµ
+# å‰ç«¯Reactç¨‹åºå¼€å‘æ–‡æ¡£
 
-## ¼ò½é
+## ç®€ä»‹
 
-±¾ÏîÄ¿ÊÇÒ»¸öÇ°¶ËReact³ÌÐò£¬ÊµÏÖÁËÁ½¸ö²»Í¬µÄbot½çÃæ¡£Ò»¸öÊ¹ÓÃbot framework sdkÖÐµÄdirect lineÁ¬½Óºó¶Ë£¬ÁíÒ»¸öÖ±½Óµ÷ÓÃasp .net core api¡£ÏîÄ¿ÖÐÉèÓÐÒ»¸öhard codeµÄÓÃ»§ÃûÃÜÂë£¬ÓÃ»§Ãû: admin£¬ÃÜÂë: 123456¡£
+æœ¬é¡¹ç›®æ˜¯ä¸€ä¸ªå‰ç«¯Reactç¨‹åºï¼Œå®žçŽ°äº†ä¸¤ä¸ªä¸åŒçš„botç•Œé¢ã€‚ä¸€ä¸ªä½¿ç”¨bot framework sdkä¸­çš„direct lineè¿žæŽ¥åŽç«¯ï¼Œå¦ä¸€ä¸ªç›´æŽ¥è°ƒç”¨asp .net core apiã€‚é¡¹ç›®ä¸­è®¾æœ‰ä¸€ä¸ªhard codeçš„ç”¨æˆ·åå¯†ç ï¼Œç”¨æˆ·å: adminï¼Œå¯†ç : 123456ã€‚
 
-## ¿ª·¢»·¾³
-
+## å¼€å‘çŽ¯å¢ƒ
 - Node.js
 - React
 - TypeScript
 
-## ÏîÄ¿½á¹¹
-
+## é¡¹ç›®ç»“æž„
 ```
 frontend/
-   ©À©¤©¤ public/
-   ©À©¤©¤ src/
-   ©¦   ©À©¤©¤ components/
-   ©¦   ©À©¤©¤ pages/
-   ©¦   ©À©¤©¤ utils/
-   ©¦   ©À©¤©¤ App.tsx
-   ©¦   ©¸©¤©¤ index.tsx
-   ©À©¤©¤ package.json
-   ©¸©¤©¤ tsconfig.json
+   â”œâ”€â”€ public/
+   â”œâ”€â”€ src/
+   â”‚   â”œâ”€â”€ components/
+   â”‚   â”œâ”€â”€ pages/
+   â”‚   â”œâ”€â”€ utils/
+   â”‚   â”œâ”€â”€ App.tsx
+   â”‚   â””â”€â”€ index.tsx
+   â”œâ”€â”€ package.json
+   â””â”€â”€ tsconfig.json
 ```
 
-## ÒÀÀµ°ü
 
-ÒÔÏÂÊÇÏîÄ¿ÖÐÊ¹ÓÃµÄÖ÷ÒªÒÀÀµ°ü£º
+## ä¾èµ–åŒ…
+ä»¥ä¸‹æ˜¯é¡¹ç›®ä¸­ä½¿ç”¨çš„ä¸»è¦ä¾èµ–åŒ…ï¼š
 
 - @azure/msal-browser: Microsoft Authentication Library (MSAL) for JavaScript browser-based applications
 - @azure/msal-react: React wrapper for MSAL Browser
@@ -58,41 +56,37 @@ frontend/
 - react-syntax-highlighter: Syntax highlighting component for React
 - typescript: TypeScript language
 
-## ÔËÐÐ½Å±¾
-
-ÔÚÏîÄ¿¸ùÄ¿Â¼ÏÂ£¬¿ÉÒÔÔËÐÐÒÔÏÂÃüÁî£º
+##è¿è¡Œè„šæœ¬
+åœ¨é¡¹ç›®æ ¹ç›®å½•ä¸‹ï¼Œå¯ä»¥è¿è¡Œä»¥ä¸‹å‘½ä»¤ï¼š
 
 ### `npm start`
 
-ÔÚ¿ª·¢Ä£Ê½ÏÂÔËÐÐÓ¦ÓÃ³ÌÐò¡£  
-´ò¿ª [http://localhost:3000](http://localhost:3000) ÔÚä¯ÀÀÆ÷ÖÐ²é¿´¡£
+åœ¨å¼€å‘æ¨¡å¼ä¸‹è¿è¡Œåº”ç”¨ç¨‹åºã€‚
+æ‰“å¼€ http://localhost:3000 åœ¨æµè§ˆå™¨ä¸­æŸ¥çœ‹ã€‚
 
 ### `npm test`
 
-ÒÔ½»»¥Ê½¼àÊÓÄ£Ê½Æô¶¯²âÊÔÔËÐÐ³ÌÐò¡£
+ä»¥äº¤äº’å¼ç›‘è§†æ¨¡å¼å¯åŠ¨æµ‹è¯•è¿è¡Œç¨‹åºã€‚
 
 ### `npm run build`
 
-½«Ó¦ÓÃ³ÌÐò¹¹½¨µ½ `build` ÎÄ¼þ¼ÐÖÐ¡£  
-Ëü»áÔÚÉú²úÄ£Ê½ÏÂÕýÈ·µØ´ò°üReact£¬²¢ÓÅ»¯¹¹½¨ÒÔ»ñµÃ×î¼ÑÐÔÄÜ¡£
+å°†åº”ç”¨ç¨‹åºæž„å»ºåˆ° build æ–‡ä»¶å¤¹ä¸­ã€‚
+å®ƒä¼šåœ¨ç”Ÿäº§æ¨¡å¼ä¸‹æ­£ç¡®åœ°æ‰“åŒ…Reactï¼Œå¹¶ä¼˜åŒ–æž„å»ºä»¥èŽ·å¾—æœ€ä½³æ€§èƒ½ã€‚
 
 ### `npm run eject`
 
-**×¢Òâ: ÕâÊÇÒ»¸öµ¥Ïò²Ù×÷¡£Ò»µ©Äã `eject`£¬Äã¾Í²»ÄÜ»ØÈ¥ÁË£¡**
+æ³¨æ„: è¿™æ˜¯ä¸€ä¸ªå•å‘æ“ä½œã€‚ä¸€æ—¦ä½  ejectï¼Œä½ å°±ä¸èƒ½å›žåŽ»äº†ï¼
 
-Èç¹ûÄã¶Ô¹¹½¨¹¤¾ßºÍÅäÖÃÑ¡Ôñ²»ÂúÒâ£¬¿ÉÒÔËæÊ± `eject`¡£´ËÃüÁî½«´ÓÏîÄ¿ÖÐÉ¾³ýµ¥¸ö¹¹½¨ÒÀÀµÏî¡£
+å¦‚æžœä½ å¯¹æž„å»ºå·¥å…·å’Œé…ç½®é€‰æ‹©ä¸æ»¡æ„ï¼Œå¯ä»¥éšæ—¶ ejectã€‚æ­¤å‘½ä»¤å°†ä»Žé¡¹ç›®ä¸­åˆ é™¤å•ä¸ªæž„å»ºä¾èµ–é¡¹ã€‚
 
-## ´úÂë¹æ·¶
+##ä»£ç è§„èŒƒ
+é¡¹ç›®ä½¿ç”¨Prettierå’ŒESLintè¿›è¡Œä»£ç æ ¼å¼åŒ–å’Œè§„èŒƒæ£€æŸ¥ã€‚è¯·ç¡®ä¿éµå¾ªé¡¹ç›®ä¸­å®šä¹‰çš„ä»£ç è§„èŒƒã€‚
 
-ÏîÄ¿Ê¹ÓÃPrettierºÍESLint½øÐÐ´úÂë¸ñÊ½»¯ºÍ¹æ·¶¼ì²é¡£ÇëÈ·±£×ñÑ­ÏîÄ¿ÖÐ¶¨ÒåµÄ´úÂë¹æ·¶¡£
+##æ€§èƒ½å’Œå®‰å…¨
+åœ¨å¼€å‘è¿‡ç¨‹ä¸­ï¼Œè¯·æ³¨æ„æ£€æŸ¥æ½œåœ¨çš„æ€§èƒ½é—®é¢˜å’Œå®‰å…¨é£Žé™©ã€‚ä¾‹å¦‚ï¼Œé¿å…åœ¨ç»„ä»¶ä¸­ä½¿ç”¨å†…è”å‡½æ•°ï¼Œä»¥å‡å°‘ä¸å¿…è¦çš„é‡æ–°æ¸²æŸ“ã€‚å¯¹äºŽå®‰å…¨é£Žé™©ï¼Œè¯·ç¡®ä¿å¯¹ç”¨æˆ·è¾“å…¥è¿›è¡Œé€‚å½“çš„éªŒè¯å’Œæ¸…ç†ï¼Œä»¥é˜²æ­¢è·¨ç«™è„šæœ¬ï¼ˆXSSï¼‰æ”»å‡»ç­‰å®‰å…¨æ¼æ´žã€‚
 
-## ÐÔÄÜºÍ°²È«
-
-ÔÚ¿ª·¢¹ý³ÌÖÐ£¬Çë×¢Òâ¼ì²éÇ±ÔÚµÄÐÔÄÜÎÊÌâºÍ°²È«·çÏÕ¡£ÀýÈç£¬±ÜÃâÔÚ×é¼þÖÐÊ¹ÓÃÄÚÁªº¯Êý£¬ÒÔ¼õÉÙ²»±ØÒªµÄÖØÐÂäÖÈ¾¡£¶ÔÓÚ°²È«·çÏÕ£¬ÇëÈ·±£¶ÔÓÃ»§ÊäÈë½øÐÐÊÊµ±µÄÑéÖ¤ºÍÇåÀí£¬ÒÔ·ÀÖ¹¿çÕ¾½Å±¾£¨XSS£©¹¥»÷µÈ°²È«Â©¶´¡£
-
-## ¹±Ï×
-
-ÔÚÎªÏîÄ¿×ö³ö¹±Ï×Ê±£¬ÇëÈ·±£×ñÑ­´úÂë¹æ·¶£¬²¢ÔÚÌá½»¸ü¸ÄÖ®Ç°½øÐÐ³ä·ÖµÄ²âÊÔ¡£
+##è´¡çŒ®
+åœ¨ä¸ºé¡¹ç›®åšå‡ºè´¡çŒ®æ—¶ï¼Œè¯·ç¡®ä¿éµå¾ªä»£ç è§„èŒƒï¼Œå¹¶åœ¨æäº¤æ›´æ”¹ä¹‹å‰è¿›è¡Œå……åˆ†çš„æµ‹è¯•ã€‚
 
 <!-- English -->
 
@@ -112,15 +106,15 @@ This project is a frontend React application that implements two different bot i
 
 ```
 frontend/
-   ©À©¤©¤ public/
-   ©À©¤©¤ src/
-   ©¦   ©À©¤©¤ components/
-   ©¦   ©À©¤©¤ pages/
-   ©¦   ©À©¤©¤ utils/
-   ©¦   ©À©¤©¤ App.tsx
-   ©¦   ©¸©¤©¤ index.tsx
-   ©À©¤©¤ package.json
-   ©¸©¤©¤ tsconfig.json
+   â”œâ”€â”€ public/
+   â”œâ”€â”€ src/
+   â”‚   â”œâ”€â”€ components/
+   â”‚   â”œâ”€â”€ pages/
+   â”‚   â”œâ”€â”€ utils/
+   â”‚   â”œâ”€â”€ App.tsx
+   â”‚   â””â”€â”€ index.tsx
+   â”œâ”€â”€ package.json
+   â””â”€â”€ tsconfig.json
 ```
 
 ## Dependency Packages

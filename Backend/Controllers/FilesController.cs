@@ -333,7 +333,7 @@ namespace WebApi.Controllers
             //List<string> output = new List<string>();
             string output = string.Empty;
             // Use regular expressions to split the string
-            string pattern = @"([\S ]+?[.!?������][""��]{0,1}\r{0,1}\n{0,1})";
+            string pattern = @"([\S ]+?[.!?。！？][""”]{0,1}\r{0,1}\n{0,1})";
             string[] split = Regex.Split(input, pattern, RegexOptions.Multiline);
             int sentenseIndex = 0;
             string sentenseOutput = string.Empty;
