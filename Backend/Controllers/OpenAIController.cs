@@ -148,18 +148,15 @@ namespace Backend.Controllers
         }
 
 
-        [HttpPost, DisableRequestSizeLimit]
+        [HttpPost]
         [Route("search")]
-        public async Task<IActionResult> search([FromBody] string content)
+        public async Task<IActionResult> Search([FromBody] string content)
         {
             _logger.Enter();
             await Task.CompletedTask;
             try
             {
-
-
                 var result=await _aiService.SearchVectorAsync(content);
-                
 
                 return Ok(new
                 {

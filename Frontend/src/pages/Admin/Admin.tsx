@@ -21,8 +21,9 @@ const Main = (props: any) => {
                 <Fragment>
 
                         <Box sx={{ flexGrow: 1 }} >
-                            <Typography variant='subtitle1' textAlign={"center"} >知识库</Typography>
-                            <FilesUploader type={1} />
+                        <Typography variant='subtitle1' textAlign={"center"} >知识库</Typography>
+                        <Typography variant="h6">Notes:Please add a "-cn" suffix in your file name if it's a Chinese document,e.g. "sample-cn.pdf" </Typography>
+                        <FilesUploader type={1} />
                         </Box >
                 </Fragment>
             );

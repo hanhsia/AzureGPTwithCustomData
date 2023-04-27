@@ -149,6 +149,55 @@ sudo docker pull qdrant/qdrant
 
 现在，Qdrant 矢量数据库已成功安装并运行在 Azure 虚拟机的 6333 端口上。
 
+如果你想在虚拟机重新启动的时候自动运行，需要创建一个服务，步骤如下：
+1. 创建一个新的 Systemd 服务文件：
+
+```bash
+sudo nano /etc/systemd/system/qdrant.service
+```
+
+2. 将以下内容粘贴到文件中，确保将 `/path/to/data` 替换为实际路径：
+
+```
+[Unit]
+Description=Qdrant Docker Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker run -p 6333:6333 -v /path/to/data:/qdrant/storage qdrant/qdrant
+ExecStop=/usr/bin/docker stop qdrant
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. 保存并退出文件。然后运行以下命令以启用并启动服务：
+
+```bash
+sudo systemctl enable qdrant.service
+sudo systemctl start qdrant.service
+```
+检查服务状态：
+
+```bash
+sudo systemctl status qdrant.service
+```
+
+如果服务正在运行，您将看到类似于以下内容的输出：
+
+```
+● qdrant.service - Qdrant Docker Service
+   Loaded: loaded (/etc/systemd/system/qdrant.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2021-11-22 12:34:56 UTC; 1min 5s ago
+ Main PID: 12345 (docker)
+    Tasks: 15 (limit: 4915)
+   CGroup: /system.slice/qdrant.service
+           └─12345 /usr/bin/docker run -p 6333:6333 -v /path/to/data:/qdrant/storage qdrant/qdrant
+```
+
 ## 3. 部署 React 前端
 
 ### a. 安装 Node.js
@@ -399,6 +448,56 @@ sudo docker pull qdrant/qdrant
    sudo docker run -p 6333:6333 -v /path/to/data:/qdrant/storage qdrant/qdrant
    ```
 Now, the Qdrant vector database is successfully installed and running on port 6333 of the Azure virtual machine.
+If you want to automatically run the service when the virtual machine restarts, you need to create a service with the following steps:
+
+1. Create a new Systemd service file:
+
+```bash
+sudo nano /etc/systemd/system/qdrant.service
+```
+
+2. Paste the following content into the file, making sure to replace `/path/to/data` with the actual path:
+
+```
+[Unit]
+Description=Qdrant Docker Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/docker run -p 6333:6333 -v /path/to/data:/qdrant/storage qdrant/qdrant
+ExecStop=/usr/bin/docker stop qdrant
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. Save and exit the file. Then run the following commands to enable and start the service:
+
+```bash
+sudo systemctl enable qdrant.service
+sudo systemctl start qdrant.service
+```
+
+Check the service status:
+
+```bash
+sudo systemctl status qdrant.service
+```
+
+If the service is running, you will see output similar to the following:
+
+```
+● qdrant.service - Qdrant Docker Service
+   Loaded: loaded (/etc/systemd/system/qdrant.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2021-11-22 12:34:56 UTC; 1min 5s ago
+ Main PID: 12345 (docker)
+    Tasks: 15 (limit: 4915)
+   CGroup: /system.slice/qdrant.service
+           └─12345 /usr/bin/docker run -p 6333:6333 -v /path/to/data:/qdrant/storage qdrant/qdrant
+```
 
 ## 3. Deploy React frontend
 ### a. Install Node.js

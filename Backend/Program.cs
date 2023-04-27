@@ -124,6 +124,7 @@ namespace Backend
                 c.BaseAddress = new Uri("https://directline.botframework.com");
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
             });
+
             var qdrantEndpoint= builder.Configuration["QdrantEndpoint"];
             if (!string.IsNullOrEmpty(qdrantEndpoint))
             {
